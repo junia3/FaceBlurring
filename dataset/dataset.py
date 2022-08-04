@@ -37,7 +37,7 @@ class FaceDataset(Dataset):
 				for filename in files:
 					ext = os.path.splitext(filename)[-1]
 					if ext in ['.jpg', '.png'] and 'clean' in path:
-						paths += [os.path.join(path. filename)]
+						paths += [os.path.join(path, filename)]
 		return paths
 
 	def _get_blur_samples(self, roots):
