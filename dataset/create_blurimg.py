@@ -1,0 +1,160 @@
+import argparse
+from tqdm import tqdm
+import numpy as np
+import cv2, os
+import pandas as pd
+from blur import *
+from utils import *
+
+class CreateBlurImg:
+	'''
+		class to create blur image dataset from raw images
+	'''
+	def __init__(self, data_dir, blur_method='defocus', motionblur_hyperparameters=None):
+		'''
+			create blurred images in the data_directory
+		'''
+		# Available img files
+		self.available = ['.png', '.jpg']
+
+		# Get sample paths in list
+		self.sample_paths = self._get_all_imgs(data_dir)
+		self._create_sample_dirs()   
+
+		# motion blur method
+		self.blur_method = blur_method
+		
+		if self.blur_method == 'defocus' or self.blur_method is None:
+			# Get motion blur hyperparameters
+			if motionblur_hyperparameters is None:
+				self.parameters = {'mean':50, 'var':20, 'dmin':10, 'dmax':100}
+			else:
+				self.parameters = motionblur_hyperparameters
+
+		elif self.blur_method == 'deblurGAN':
+			if motionblur_hyperparameters is None:
+				self.parameters = {'canvas':64,
+					'iters':2000,
+					'max_len':60,
+					'expl':np.random.choice([0.003, 0.001,
+							0.0007, 0.0005,
+							0.0003, 0.0001]),
+					'part':np.random.choice([1, 2, 3])}
+			else:
+				self.parameters = motionblur_hyperparameters
+		else:
+			raise ValueError(f'{blur_method} is not an available blur method')
+
+	def _get_all_imgs(self, root):
+		'''
+			Function to get all image samples inside the directory
+			os.walk will search all directory
+		'''
+		paths = []
+		print('Check all sample images(clean)...')
+		for (path, directory, files) in tqdm(os.walk(root)):
+			for filename in files:
+				ext = os.path.splitext(filename)[-1]
+				if ext in self.available and 'clean' in path:
+					paths += [os.path.join(path, filename)]
+
+		return paths
+
+	def _create_sample_dirs(self):
+		print('Create sample directories...')
+		for files in tqdm(self.sample_paths):
+			path = os.path.dirname(files)
+			path2list = path.split('/')
+			rootpath = '/'.join(path2list[:3])
+			subpath = '/'.join(path2list[4:])
+			blurpath = os.path.join(rootpath, 'blur', subpath)
+			os.makedirs(blurpath, exist_ok=True)
+
+	def generate_blur_images(self, save=True, label=False):
+		print('Generate blur images...')
+		dict_for_label = {'filename' : [], 'label' : []}
+		if self.blur_method == 'defocus':
+			for image_file in tqdm(self.sample_paths):
+				image = cv2.imread(image_file)
+				blurred = blurring(image, self.parameters)
+
+				if save and label:
+					path = os.path.dirname(image_file)
+					path2list = path.split('/')
+					rootpath = '/'.join(path2list[:3])
+					subpath = '/'.join(path2list[4:])
+					blurpath = os.path.join(rootpath, 'blur', subpath)
+
+					assert len(blurpath)+1 == len(path), 'You should create data directory properly'
+					cv2.imwrite(os.path.join(blurpath, os.path.basename(image_file)), blurred)
+					
+					dict_for_label['filename'] += [os.path.join(blurpath, os.path.basename(image_file))]
+					dict_for_label['label'].append(psnr(image, blurred))
+
+				elif save:
+					path = os.path.dirname(image_file)
+					path2list = path.split('/')
+					rootpath = '/'.join(path2list[:3])
+					subpath = '/'.join(path2list[4:])
+					blurpath = os.path.join(rootpath, 'blur', subpath)
+
+					assert len(blurpath)+1 == len(path), 'You should create data directory properly'
+					cv2.imwrite(os.path.join(blurpath, os.path.basename(image_file)), blurred)
+
+				elif label:
+					raise ValueError("You cannot save label without saving blur samples")
+
+		elif self.blur_method == 'deblurGAN':
+			for image_file in tqdm(self.sample_paths):
+				self.parameters['expl'] = np.random.choice([0.003, 0.001,
+										                    0.0007, 0.0005,
+															0.0003, 0.0001])
+				self.parameters['part'] = np.random.choice([1, 2, 3])
+				trajectory = Trajectory(self.parameters).fit()
+				psf = PSF(self.parameters['canvas'], trajectory=trajectory).fit()
+				image, blurred = BlurImage(image_file, psf, self.parameters['part']).blur_image()
+
+				if save and label:
+					path = os.path.dirname(image_file)
+					path2list = path.split('/')
+					rootpath = '/'.join(path2list[:3])
+					subpath ='/'.join(path2list[4:])
+					blurpath = os.path.join(rootpath, 'blur', subpath)
+
+					assert len(blurpath)+1 == len(path), 'You should create data directory properly'
+					cv2.imwrite(os.path.join(blurpath, os.path.basename(image_file)), blurred)
+					
+					dict_for_label['filename'] += [os.path.join(blurpath, os.path.basename(image_file))]
+					dict_for_label['label'].append(psnr(image, blurred))
+
+				elif save:
+					path = os.path.dirname(image_file)
+					path2list = path.split('/')
+					rootpath = '/'.join(path2list[:3])
+					subpath ='/'.join(path2list[4:])
+					blurpath = os.path.join(rootpath, 'blur', subpath)
+
+					assert len(blurpath)+1 == len(path), 'You should create data directory properly'
+					cv2.imwrite(os.path.join(blurpath, os.path.basename(image_file)), blurred)
+				
+				elif label:
+					raise ValueError("You cannot save label without saving blur samples")
+
+		else:
+			pass
+
+		if label:
+			save_dir = "../data/label/"
+			os.makedirs(save_dir, exist_ok=True)
+			df = pd.DataFrame(dict_for_label)
+			df.to_csv(os.path.join(save_dir, "label.csv"))
+
+if __name__ == "__main__":
+	parser = argparse.ArgumentParser(description='This program creates blur images.')
+	parser.add_argument('--blur', type=str, help='defocus, deblurGAN is available', default='defocus')
+	parser.add_argument('--save', type=bool, help='option to save blurred images', default='True')
+	parser.add_argument('--label', type=bool, help='option to create labels', default='True')
+	args = parser.parse_args()
+
+	blurrer = CreateBlurImg("../data", args.blur)
+	blurrer.generate_blur_images(args.save, args.label)
