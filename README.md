@@ -57,7 +57,8 @@ You should first get samples and make directory like above structure(warning!!!!
 ---
 ## 2. create and save blur data samples
 (Updated 22/08/04) I made two options to create blur images
-- method from deblurGAN(https://openaccess.thecvf.com/content_cvpr_2018/html/Kupyn_DeblurGAN_Blind_Motion_CVPR_2018_paper.html) and github https://github.com/KupynOrest/DeblurGAN
+- method from deblurGAN
+(https://openaccess.thecvf.com/content_cvpr_2018/html/Kupyn_DeblurGAN_Blind_Motion_CVPR_2018_paper.html) and github https://github.com/KupynOrest/DeblurGAN
 
 - method from Defocus and Motion Blur Detection with Deep Contextual Features(https://onlinelibrary.wiley.com/doi/full/10.1111/cgf.13567) and github https://github.com/Imalne/Defocus-and-Motion-Blur-Detection-with-Deep-Contextual-Features
 
@@ -88,5 +89,5 @@ And do not forget to update 'text.txt' before run this command.
 ![result](https://user-images.githubusercontent.com/79881119/182824777-c6af6d25-0a8e-4f7a-9af1-92826ca1a76f.png)
 
 ---
-## Embedding test with dataset
+## 4. Embedding test with dataset
 Open "Tutorial.jpynb" with google colab.
