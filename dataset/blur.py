@@ -30,7 +30,7 @@ def blurring(img, param):
     cv2.normalize(blurred, blurred, 0, 255, cv2.NORM_MINMAX)
     blurred = np.array(blurred, dtype=np.uint8)
 
-    return blurred
+    return blurred, random_degree/dmax
 
 
 class Trajectory(object):
@@ -116,6 +116,8 @@ class PSF(object):
         PSF = np.zeros(self.canvas)
         triangle_fun = lambda x: np.maximum(0, (1 - np.abs(x)))
         triangle_fun_prod = lambda x, y: np.multiply(triangle_fun(x), triangle_fun(y))
+
+        trajectory_mag = 0.0
         for j in range(self.PSFnumber):
             if j == 0:
                 prevT = 0
@@ -123,6 +125,7 @@ class PSF(object):
                 prevT = self.fraction[j - 1]
 
             for t in range(len(self.trajectory)):
+                trajectory_list = []
                 if (self.fraction[j] * self.iters >= t) and (prevT * self.iters < t - 1):
                     t_proportion = 1
                 elif (self.fraction[j] * self.iters >= t - 1) and (prevT * self.iters < t - 1):
@@ -151,10 +154,11 @@ class PSF(object):
                 PSF[M1, M2] += t_proportion * triangle_fun_prod(
                     self.trajectory[t].real - M2, self.trajectory[t].imag - M1
                 )
-
+                trajectory_list.append(np.abs(self.trajectory[t]))
+            trajectory_mag += np.mean(trajectory_list)
             self.PSFs.append(PSF / (self.iters))
 
-        return self.PSFs
+        return self.PSFs, 0.01*trajectory_mag/self.PSFnumber
 
 class BlurImage(object):
     def __init__(self, image_path, PSFs=None, part=None):

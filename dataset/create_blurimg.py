@@ -15,7 +15,7 @@ class CreateBlurImg:
 			create blurred images in the data_directory
 		'''
 		# Available img files
-		self.available = ['.png', '.jpg']
+		self.available = ['.png', '.jpg', 'PNG', 'JPG', 'JPEG']
 
 		# Get sample paths in list
 		self.sample_paths = self._get_all_imgs(data_dir)
@@ -70,13 +70,22 @@ class CreateBlurImg:
 			blurpath = os.path.join(rootpath, 'blur', subpath)
 			os.makedirs(blurpath, exist_ok=True)
 
-	def generate_blur_images(self, save=True, label=False):
+	def generate_blur_images(self, save=True, label=False, calc='psnr'):
 		print('Generate blur images...')
-		dict_for_label = {'filename' : [], 'label' : []}
+		if calc=='psnr':
+			metric = psnr
+		elif calc == 'ssim':
+			metric = ssim
+		elif calc == 'degree':
+			metric = 'degree'
+		else:
+			raise ValueError("Not available metric.")
+		
+		dict_for_label = {'filename' : [], calc : []}
 		if self.blur_method == 'defocus':
 			for image_file in tqdm(self.sample_paths):
 				image = cv2.imread(image_file)
-				blurred = blurring(image, self.parameters)
+				blurred, degree = blurring(image, self.parameters)
 
 				if save and label:
 					path = os.path.dirname(image_file)
@@ -89,7 +98,11 @@ class CreateBlurImg:
 					cv2.imwrite(os.path.join(blurpath, os.path.basename(image_file)), blurred)
 					
 					dict_for_label['filename'] += [os.path.join(blurpath, os.path.basename(image_file))]
-					dict_for_label['label'].append(psnr(image, blurred))
+
+					if callable(metric):
+						dict_for_label[calc].append(metric(image, blurred))
+					else:
+						dict_for_label[calc].append(degree)
 
 				elif save:
 					path = os.path.dirname(image_file)
@@ -111,9 +124,8 @@ class CreateBlurImg:
 															0.0003, 0.0001])
 				self.parameters['part'] = np.random.choice([1, 2, 3])
 				trajectory = Trajectory(self.parameters).fit()
-				psf = PSF(self.parameters['canvas'], trajectory=trajectory).fit()
+				psf, mag = PSF(self.parameters['canvas'], trajectory=trajectory).fit()
 				image, blurred = BlurImage(image_file, psf, self.parameters['part']).blur_image()
-
 				if save and label:
 					path = os.path.dirname(image_file)
 					path2list = path.split('/')
@@ -125,7 +137,10 @@ class CreateBlurImg:
 					cv2.imwrite(os.path.join(blurpath, os.path.basename(image_file)), blurred)
 					
 					dict_for_label['filename'] += [os.path.join(blurpath, os.path.basename(image_file))]
-					dict_for_label['label'].append(psnr(image, blurred))
+					if callable(metric):
+						dict_for_label[calc].append(metric(image, blurred))
+					else:
+						dict_for_label[calc].append(mag)
 
 				elif save:
 					path = os.path.dirname(image_file)
@@ -154,7 +169,8 @@ if __name__ == "__main__":
 	parser.add_argument('--blur', type=str, help='defocus, deblurGAN is available', default='defocus')
 	parser.add_argument('--save', type=bool, help='option to save blurred images', default='True')
 	parser.add_argument('--label', type=bool, help='option to create labels', default='True')
+	parser.add_argument('--calc', type=str, help='option to make label(metrics), psnr, ssim, degree is available', default='psnr')
 	args = parser.parse_args()
 
 	blurrer = CreateBlurImg("../data", args.blur)
-	blurrer.generate_blur_images(args.save, args.label)
+	blurrer.generate_blur_images(args.save, args.label, args.calc)
