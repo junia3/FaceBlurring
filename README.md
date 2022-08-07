@@ -110,8 +110,10 @@ You can run dataset example 'after' generate blurred images.
    cd /dataset
    python dataset.py
 ```
+
 And do not forget to update 'text.txt' before run this command.
-This is the sample results
+This is the sample results.
+
 <img src="./dataset/result_defocus_degree.png"/>
 ---
 ## 4. Embedding test with dataset
