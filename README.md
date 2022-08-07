@@ -12,7 +12,7 @@ Basically you need pytorch, numpy, opencv-python, matplotlib, ... libraries. I d
 You can just cloning this repo into your own computer  
 And finally the directory hierarchy is configured as,  
 
-```bash
+```plaintext
 FaceBlurring
 ├── config
 │   ├── test.txt
@@ -29,7 +29,7 @@ This is just a framework to create dataset. You should add your own "face datase
 ../data/sample_root/
 ```
 If you add your own data samples to directory, add all data roots in the test.txt file line by line. For example, if you configured data samples like below,
-```bash
+```plaintext
 ...
 data
 ├── sample_root1
@@ -44,8 +44,32 @@ data
 │   │   ├── face_sample2.png(or .jpg)
 └── sample_root3
 ```
+or like below
+```plaintext
+...
+data
+├── sample_root1
+│   ├── clean
+│   │   ├── folder1
+│   │   │      ├── face_sample0.png(or jpg)
+│   │   │      ├── face_sample1.png(or jpg)
+│   │   │      ├── face_sample2.png(or jpg)
+│   │   ├── folder2
+│   │   │      ├── face_sample0.png(or jpg)
+│   │   │      ├── face_sample1.png(or jpg)
+│   │   │      ├── face_sample2.png(or jpg)
+│   │   ├── folder3
+│   │   │      ├── face_sample0.png(or jpg)
+│   │   │      ├── face_sample1.png(or jpg)
+├── sample_root2
+│   ├── clean
+│   │   ├── folder1
+│   │   ├── folder2
+│   │   ├── fdoler3
+└── sample_root3
+```
 You have to update test.txt file as
-```txt
+```plaintxt
 ../data/sample_root1/
 ../data/sample_root2/
 ../data/sample_root3/
