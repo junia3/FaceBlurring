@@ -80,6 +80,7 @@ and simply you can just generate blur images and save them with labels, into def
 ---
 ## 3. Evaluate and Visualize samples
 I created dataset module, and check how the images are labeled with psnr metric(it can be updated later with better metrics).
+(Updated 22/08/07 : PSNR, SSIM metrics are available and 'degree' metric is added for defocus blur generation method)
 You can run dataset example 'after' generate blurred images.
 ```bash
    cd /dataset
