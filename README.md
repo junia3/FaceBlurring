@@ -86,8 +86,17 @@ You can run dataset example 'after' generate blurred images.
    python dataset.py
 ```
 And do not forget to update 'text.txt' before run this command.
-![result](https://user-images.githubusercontent.com/79881119/182824777-c6af6d25-0a8e-4f7a-9af1-92826ca1a76f.png)
+<p align="center"><img src="/dataset/result.png" width="300"/>
 
 ---
 ## 4. Embedding test with dataset
-Open "Tutorial.jpynb" with google colab.
+Open "Tutorial.jpynb" with google colab.  
+### Results with facenet(defocus type blurring).  
+| PSNR | SSIM | Blur Degree |
+|------------|-------------|-------------|
+| <img src="/embedding/results_facenet_psnr.png" width="150"> | <img src="/embedding/results_facenet_ssim.png" width="150"> |<img src="/embedding/results_facenet_degree.png" width="150"> |  
+
+### Results with deepface.  
+| PSNR | SSIM | Blur Degree |
+|------------|-------------|-------------|
+| <img src="/embedding/results_deepface_psnr.png" width="150"> | <img src="/embedding/results_deepface_ssim.png" width="150"> |<img src="/embedding/results_deepface_degree.png" width="150"> |
