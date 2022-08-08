@@ -12,7 +12,7 @@ Basically you need pytorch, numpy, opencv-python, matplotlib, ... libraries. I d
 You can just cloning this repo into your own computer  
 And finally the directory hierarchy is configured as,  
 
-```plaintext
+```bash
 FaceBlurring
 ├── config
 │   ├── test.txt
@@ -29,7 +29,7 @@ This is just a framework to create dataset. You should add your own "face datase
 ../data/sample_root/
 ```
 If you add your own data samples to directory, add all data roots in the test.txt file line by line. For example, if you configured data samples like below,
-```plaintext
+```bash
 ...
 data
 ├── sample_root1
@@ -42,34 +42,10 @@ data
 │   │   ├── face_sample0.png(or .jpg)
 │   │   ├── face_sample1.png(or .jpg)
 │   │   ├── face_sample2.png(or .jpg)
-└── sample_root3
-```
-or like below
-```plaintext
-...
-data
-├── sample_root1
-│   ├── clean
-│   │   ├── folder1
-│   │   │      ├── face_sample0.png(or jpg)
-│   │   │      ├── face_sample1.png(or jpg)
-│   │   │      ├── face_sample2.png(or jpg)
-│   │   ├── folder2
-│   │   │      ├── face_sample0.png(or jpg)
-│   │   │      ├── face_sample1.png(or jpg)
-│   │   │      ├── face_sample2.png(or jpg)
-│   │   ├── folder3
-│   │   │      ├── face_sample0.png(or jpg)
-│   │   │      ├── face_sample1.png(or jpg)
-├── sample_root2
-│   ├── clean
-│   │   ├── folder1
-│   │   ├── folder2
-│   │   ├── fdoler3
 └── sample_root3
 ```
 You have to update test.txt file as
-```plaintxt
+```txt
 ../data/sample_root1/
 ../data/sample_root2/
 ../data/sample_root3/
@@ -104,17 +80,14 @@ and simply you can just generate blur images and save them with labels, into def
 ---
 ## 3. Evaluate and Visualize samples
 I created dataset module, and check how the images are labeled with psnr metric(it can be updated later with better metrics).
-(Updated 22/08/07 : PSNR, SSIM metrics are available and 'degree' metric is added for defocus blur generation method)
 You can run dataset example 'after' generate blurred images.
 ```bash
    cd /dataset
    python dataset.py
 ```
-
 And do not forget to update 'text.txt' before run this command.
-This is the sample results.
+![result](https://user-images.githubusercontent.com/79881119/182824777-c6af6d25-0a8e-4f7a-9af1-92826ca1a76f.png)
 
-<img src="./dataset/result_defocus_degree.png"/>
 ---
 ## 4. Embedding test with dataset
 Open "Tutorial.jpynb" with google colab.
