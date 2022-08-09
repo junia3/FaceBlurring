@@ -96,7 +96,7 @@ Open "Tutorial.jpynb" with google colab.
 |------------|-------------|-------------|
 | <img src="/embedding/results_facenet_psnr.png" width="150"> | <img src="/embedding/results_facenet_ssim.png" width="150"> |<img src="/embedding/results_facenet_degree.png" width="150"> |  
 
-### Results with deepface.  
+### Results with deepface(VGG-Face).  
 | PSNR | SSIM | Blur Degree |
 |------------|-------------|-------------|
 | <img src="/embedding/results_deepface_psnr.png" width="150"> | <img src="/embedding/results_deepface_ssim.png" width="150"> |<img src="/embedding/results_deepface_degree.png" width="150"> |
