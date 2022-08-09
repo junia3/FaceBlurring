@@ -94,9 +94,9 @@ Open "Tutorial.jpynb" with google colab.
 ### Results with facenet(defocus type blurring).  
 | PSNR | SSIM | Blur Degree |
 |------------|-------------|-------------|
-| <img src="/embedding/results_facenet_psnr.png" width="150"> | <img src="/embedding/results_facenet_ssim.png" width="150"> |<img src="/embedding/results_facenet_degree.png" width="150"> |  
+| <img src="/embedding/results_facenet_psnr.png" width="250"> | <img src="/embedding/results_facenet_ssim.png" width="250"> |<img src="/embedding/results_facenet_degree.png" width="250"> |  
 
 ### Results with deepface(VGG-Face).  
 | PSNR | SSIM | Blur Degree |
 |------------|-------------|-------------|
-| <img src="/embedding/results_deepface_psnr.png" width="150"> | <img src="/embedding/results_deepface_ssim.png" width="150"> |<img src="/embedding/results_deepface_degree.png" width="150"> |
+| <img src="/embedding/results_deepface_psnr.png" width="250"> | <img src="/embedding/results_deepface_ssim.png" width="250"> |<img src="/embedding/results_deepface_degree.png" width="250"> |
