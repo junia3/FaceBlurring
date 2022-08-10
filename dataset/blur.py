@@ -1,9 +1,8 @@
-import numpy as np
-import cv2
 import random
-import math
 import os
 from scipy import signal
+from utils import *
+from insightface.app import FaceAnalysis
 
 def blurring(img, param):
     '''
@@ -13,22 +12,31 @@ def blurring(img, param):
     '''
     mean, var, dmin, dmax = param['mean'], param['var'], param['dmin'], param['dmax']
     # Create random degree and random angle with parameters
-    random_degree = dmax + 1
-    while random_degree < dmin or random_degree > dmax:
+    '''
+        random_degree = dmax + 1
+        while random_degree < dmin or random_degree > dmax:
         random_degree = int(random.normalvariate(mean, var))
+    '''
+    random_degree = random.randint(dmin, dmax)
     random_angle = random.randint(-180, 180)
 
-    # Create random motion blur kernel
-    M = cv2.getRotationMatrix2D((random_degree / 2, random_degree / 2), random_angle, 1)
-    kernel = np.diag(np.ones(random_degree))
-    kernel = cv2.warpAffine(kernel, M, (random_degree, random_degree))
-    kernel = kernel / random_degree
+    if random_degree == 0:
+        image = np.array(img)
+        cv2.normalize(image, image, 0, 255, cv2.NORM_MINMAX)
+        blurred = np.array(image, dtype=np.uint8)
 
-    # Apply kernel on the image sample
-    image = np.array(img)
-    blurred = cv2.filter2D(image, -1, kernel)
-    cv2.normalize(blurred, blurred, 0, 255, cv2.NORM_MINMAX)
-    blurred = np.array(blurred, dtype=np.uint8)
+    else:
+        # Create random motion blur kernel
+        M = cv2.getRotationMatrix2D((random_degree / 2, random_degree / 2), random_angle, 1)
+        kernel = np.diag(np.ones(random_degree))
+        kernel = cv2.warpAffine(kernel, M, (random_degree, random_degree))
+        kernel = kernel / random_degree
+
+        # Apply kernel on the image sample
+        image = np.array(img)
+        blurred = cv2.filter2D(image, -1, kernel)
+        cv2.normalize(blurred, blurred, 0, 255, cv2.NORM_MINMAX)
+        blurred = np.array(blurred, dtype=np.uint8)
 
     return blurred, random_degree/dmax
 
@@ -161,21 +169,29 @@ class PSF(object):
         return self.PSFs, 0.01*trajectory_mag/self.PSFnumber
 
 class BlurImage(object):
-    def __init__(self, image_path, PSFs=None, part=None):
+    def __init__(self, image_path, PSFs=None, part=None, scrfd=False, app=None):
         """
         :param PSFs: array of Kernels.
         :param part: int number of kernel to use.
         """
+        if app is None:
+            app = FaceAnalysis(allowed_modules=['detection'],
+                               providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
+            app.prepare(ctx_id=0, det_size=(640, 640))
+
         if os.path.isfile(image_path):
             self.image_path = image_path
             self.original = cv2.imread(self.image_path)
+            if scrfd:
+                self.original, _ = crop_n_align(app, self.original)
+
             self.shape = self.original.shape
             if len(self.shape) < 3:
                 raise Exception('We support only RGB images yet.')
             elif self.shape[0] != self.shape[1]:
                 raise Exception('We support only square images yet.')
         else:
-            raise Exception('Not correct path to image.')
+            raise Exception(f'{image_path} is not correct path to image.')
 
         if PSFs is None:
             self.PSFs = PSF(canvas=self.original.shape[0]).fit()

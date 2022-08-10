@@ -1,10 +1,9 @@
 import argparse
 from tqdm import tqdm
-import numpy as np
-import cv2, os
 import pandas as pd
 from blur import *
 from utils import *
+from insightface.app import FaceAnalysis
 
 class CreateBlurImg:
 	'''
@@ -27,7 +26,7 @@ class CreateBlurImg:
 		if self.blur_method == 'defocus' or self.blur_method is None:
 			# Get motion blur hyperparameters
 			if motionblur_hyperparameters is None:
-				self.parameters = {'mean':50, 'var':20, 'dmin':10, 'dmax':100}
+				self.parameters = {'mean':50, 'var':20, 'dmin':0, 'dmax':120}
 			else:
 				self.parameters = motionblur_hyperparameters
 
@@ -70,9 +69,12 @@ class CreateBlurImg:
 			blurpath = os.path.join(rootpath, 'blur', subpath)
 			os.makedirs(blurpath, exist_ok=True)
 
-	def generate_blur_images(self, save=True, label=False, calc='psnr'):
+	def generate_blur_images(self, save=True, label=False, calc='psnr', scrfd=False):
+		# scrfd normalize and align
+		app = FaceAnalysis(allowed_modules=['detection'], providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
+		app.prepare(ctx_id=0, det_size=(640, 640))
 		print('Generate blur images...')
-		if calc=='psnr':
+		if calc == 'psnr':
 			metric = psnr
 		elif calc == 'ssim':
 			metric = ssim
@@ -84,7 +86,14 @@ class CreateBlurImg:
 		dict_for_label = {'filename' : [], calc : []}
 		if self.blur_method == 'defocus':
 			for image_file in tqdm(self.sample_paths):
-				image = cv2.imread(image_file)
+				if os.path.isfile(image_file):
+					image = cv2.imread(image_file)
+					if scrfd:
+						image, find = crop_n_align(app, image)
+						if not find:
+							continue
+				else:
+					continue
 				blurred, degree = blurring(image, self.parameters)
 
 				if save and label:
@@ -118,6 +127,7 @@ class CreateBlurImg:
 					raise ValueError("You cannot save label without saving blur samples")
 
 		elif self.blur_method == 'deblurGAN':
+			# SCRFD 적용하는 코드 작성해야함(근데 사실 이거 코드 안쓸거같음)
 			for image_file in tqdm(self.sample_paths):
 				self.parameters['expl'] = np.random.choice([0.003, 0.001,
 										                    0.0007, 0.0005,
@@ -125,7 +135,7 @@ class CreateBlurImg:
 				self.parameters['part'] = np.random.choice([1, 2, 3])
 				trajectory = Trajectory(self.parameters).fit()
 				psf, mag = PSF(self.parameters['canvas'], trajectory=trajectory).fit()
-				image, blurred = BlurImage(image_file, psf, self.parameters['part']).blur_image()
+				image, blurred = BlurImage(image_file, psf, self.parameters['part'], scrfd, app).blur_image()
 				if save and label:
 					path = os.path.dirname(image_file)
 					path2list = path.split('/')
@@ -170,7 +180,8 @@ if __name__ == "__main__":
 	parser.add_argument('--save', type=bool, help='option to save blurred images', default='True')
 	parser.add_argument('--label', type=bool, help='option to create labels', default='True')
 	parser.add_argument('--calc', type=str, help='option to make label(metrics), psnr, ssim, degree is available', default='psnr')
+	parser.add_argument('--scrfd', type=bool, help='Apply scrfd crop and align on the image', default=False)
 	args = parser.parse_args()
 
 	blurrer = CreateBlurImg("../data", args.blur)
-	blurrer.generate_blur_images(args.save, args.label, args.calc)
+	blurrer.generate_blur_images(args.save, args.label, args.calc, args.scrfd)

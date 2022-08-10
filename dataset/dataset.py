@@ -7,7 +7,7 @@ from utils import *
 import matplotlib.pyplot as plt
 
 class FaceDataset(Dataset):
-	def __init__(self, txt_file, option='clean', calc='psnr', transform=None):
+	def __init__(self, txt_file, option='clean', calc='psnr'):
 		'''
 			face dataset module
 			txt file must include root directory of sample images
@@ -38,7 +38,7 @@ class FaceDataset(Dataset):
 			for (path, directory, files) in os.walk(root):
 				for filename in files:
 					ext = os.path.splitext(filename)[-1]
-					if ext in ['.jpg', '.png'] and 'clean' in path:
+					if ext in ['.png', '.jpg', 'PNG', 'JPG', 'JPEG'] and 'clean' in path:
 						paths += [os.path.join(path, filename)]
 		return paths
 
@@ -58,7 +58,7 @@ class FaceDataset(Dataset):
 			for (path, directory, files) in os.walk(root):
 				for filename in files:
 					ext = os.path.splitext(filename)[-1]
-					if ext in ['.jpg', '.png'] and 'blur' in path:
+					if ext in ['.png', '.jpg', 'PNG', 'JPG', 'JPEG'] and 'blur' in path:
 						filepath = os.path.join(path, filename)
 						paths += [filepath]
 						labels.append(df.loc[df['filename'] == filepath][self.calc].item())
