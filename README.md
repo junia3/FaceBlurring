@@ -86,17 +86,27 @@ You can run dataset example 'after' generate blurred images.
    python dataset.py
 ```
 And do not forget to update 'text.txt' before run this command.
-<p align="center"><img src="/dataset/result.png" width="300"/>
+<p align="center"><img src="./dataset/result_defocus_degree.png", width="550">
 
 ---
 ## 4. Embedding test with dataset
-Open "Tutorial.jpynb" with google colab.  
-### Results with facenet(defocus type blurring).  
+Open "Tutorial.jpynb" with google colab.
+### Results with deepface(Facenet).  
 | PSNR | SSIM | Blur Degree |
 |------------|-------------|-------------|
-| <img src="/embedding/results_facenet_psnr.png" width="250"> | <img src="/embedding/results_facenet_ssim.png" width="250"> |<img src="/embedding/results_facenet_degree.png" width="250"> |  
+| <img src="./embedding/results_deepface_psnr_Facenet.png" width="250"> | <img src="./embedding/results_deepface_ssim_Facenet.png" width="250"> |<img src="./embedding/results_deepface_degree_Facenet.png" width="250"> |  
+
+### Results with deepface(DeepFace).  
+| PSNR | SSIM | Blur Degree |
+|------------|-------------|-------------|
+| <img src="./embedding/results_deepface_psnr_DeepFace.png" width="250"> | <img src="./embedding/results_deepface_ssim_DeepFace.png" width="250"> |<img src="./embedding/results_deepface_degree_DeepFace.png" width="250"> |
+
+### Results with deepface(ArcFace).  
+| PSNR | SSIM | Blur Degree |
+|------------|-------------|-------------|
+| <img src="./embedding/results_deepface_psnr_ArcFace.png" width="250"> | <img src="./embedding/results_deepface_ssim_ArcFace.png" width="250"> |<img src="./embedding/results_deepface_degree_ArcFace.png" width="250"> |
 
 ### Results with deepface(VGG-Face).  
 | PSNR | SSIM | Blur Degree |
 |------------|-------------|-------------|
-| <img src="/embedding/results_deepface_psnr.png" width="250"> | <img src="/embedding/results_deepface_ssim.png" width="250"> |<img src="/embedding/results_deepface_degree.png" width="250"> |
+| <img src="./embedding/results_deepface_psnr_VGG-Face.png" width="250"> | <img src="./embedding/results_deepface_ssim_VGG-Face.png" width="250"> |<img src="./embedding/results_deepface_degree_VGG-Face.png" width="250"> |
