@@ -164,6 +164,9 @@ Open "Tutorial.jpynb" with google colab.
 | <img src="./embedding/results_deepface_psnr_VGG-Face.png" width="250"> | <img src="./embedding/results_deepface_ssim_VGG-Face.png" width="250"> |<img src="./embedding/results_deepface_degree_VGG-Face.png" width="250"> |
 
 ---
+
+More embedding test results in https://github.com/junia3/FaceBlurring/tree/main/Distance
+
 ## Train baseline models with generated dataset
 #### 1. Generate dataset
 - method from Defocus and Motion Blur Detection with Deep Contextual Features(https://onlinelibrary.wiley.com/doi/full/10.1111/cgf.13567) and github https://github.com/Imalne/Defocus-and-Motion-Blur-Detection-with-Deep-Contextual-Features
