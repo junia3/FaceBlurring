@@ -219,4 +219,4 @@ It can be seen that the image on the clean left is the same (1.00) as the origin
 
 <p align="center"><img src="./results/blur_random_cosine.png", width="550">
 
-In fact, the image on the right has more blurs on the degree ( $d$ ), but the image on the left is more blurred by the angle( $\theta$ ) of the kernel that produces motion blur. Even in this case, it can be seen that cosine simplicity well represents an image that looks more visually blurred.
+In fact, the image on the right has more blurs on the degree ($ d $), but the image on the left is more blurred by the angle($ \theta $) of the kernel that produces motion blur. Even in this case, it can be seen that cosine simplicity well represents an image that looks more visually blurred.
