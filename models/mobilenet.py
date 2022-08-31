@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import math
 import numpy as np
 
@@ -98,13 +99,17 @@ class FaceMobileNetV2(nn.Module):
         self.features = nn.Sequential(*self.features)
 
         # building regressor
-        self.regressor = nn.Linear(self.last_channel, 1)
+        self.regressor = nn.Sequential(
+            nn.Linear(self.last_channel, 100),
+            nn.ReLU(inplace=True),
+            nn.Linear(100, 1)
+        )
         self._initialize_weights()
 
     def forward(self, x):
         x = self.features(x)
         x = x.mean(3).mean(2) #Global average pooling
-        x = torch.sigmoid(self.regressor(x))
+        x = self.regressor(x)
         return x
 
     def _initialize_weights(self):
@@ -165,8 +170,11 @@ class FaceMobileNetV1(nn.Module):
         )
         self.fc = nn.Sequential(
             nn.Linear(1024, 100),
+            nn.BatchNorm1d(100),
             nn.ReLU(inplace=True),
-            nn.Dropout(0.5),
+            nn.Linear(100, 100),
+            nn.BatchNorm1d(100),
+            nn.ReLU(inplace=True),
             nn.Linear(100, n_classes)
         )
 

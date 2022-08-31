@@ -77,7 +77,6 @@ class ResNet(nn.Module):
         # building regressor
         self.regressor = nn.Sequential(nn.Linear(512 * block.expansion, 100),
                                        nn.ReLU(inplace=True),
-                                       nn.Dropout(0.5),
                                        nn.Linear(100, 1))
         self.initialize()
 
