@@ -18,7 +18,7 @@ def calculate_distances(img_dir, idx):
     return blurred_img, l1, l2, cossim
 
 def L1_distance(emb1, emb2):
-    return torch.abs(torch.sum(emb1 - emb2))
+    return torch.sum(torch.abs(emb1 - emb2))
 
 def L2_distance(emb1, emb2):
     return torch.sqrt(torch.sum(torch.square(emb1 - emb2)))
