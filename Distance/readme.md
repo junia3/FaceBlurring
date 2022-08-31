@@ -153,11 +153,11 @@ def cos_sim(emb1, emb2):
 
 ---
 # 4. Average distance and similarity on 30 samples
-$$ L_1(j)^{avg} = \frac{1}{30} \sum_{i=0}^{29} \left| e_i - \epsilon_i^j \right| $$
+$$ L_1(j)^{avg} = \frac{1}{30} \sum_{i=0}^{29} \parallel g(r_i)-g(b_i^j) \parallel_1 $$
 
-$$ L_2(j)^{avg} = \frac{1}{30} \sqrt{\sum_{i=0}^{29} \left( e_i-\epsilon_i^j \right)^2} $$
+$$ L_2(j)^{avg} = \frac{1}{30} \sum_{i=0}^{29} \parallel g(r_i)-g(b_i^j) \parallel_2 $$
 
-$$ \text{Similarity}(j)^{avg} = \frac{1}{30} \sum_{i=0}^{29} \left( \frac{|e_i \cdot \epsilon_i^j|}{ |e_i|\times |\epsilon_i^j|} \right) $$
+$$ \text{Similarity}(j)^{avg} = \frac{1}{30} \sum_{i=0}^{29} \left[ 1- \frac{g(r_i) \cdot g(b_i^j)}{ \parallel g(r_i)\parallel_2 \cdot \parallel g(b_i^j) \parallel_2} \right] $$
 
 for reference face embedding $e_i = g(r_i)$ from face recognition model $g(\cdot)$ inference on reference face image $r_i$.
 and blurred face embedding $\epsilon_i^j = g(b_i^j)$ from face recognition model inference on blurred face image $k_j * r_i$ with $j^{th}$ blur kernel $k_j$.
